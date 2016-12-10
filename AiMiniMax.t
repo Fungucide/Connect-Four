@@ -11,6 +11,7 @@ class AiMiniMax
     % Variables
     var curBoard : ^connectFourBoard
     var tempBoard : ^connectFourBoard
+    var preBoard : flexible array 0 .. 0 of ^connectFourBoard
     new connectFourBoard, curBoard
     new connectFourBoard, tempBoard
 
@@ -54,6 +55,13 @@ class AiMiniMax
     end getTotalScore
 
     procedure getScoreOfBoard (depth : int, var scoreR : int, var winScoreR : int)
+	for i : 0 .. 7
+	    for h : 0 .. 7
+		put : stremout, tempBoard -> board (i, h) : 3 ..
+	    end for
+	    put : stremout, ""
+	end for
+	preBoard (depth) -> setBoard (tempBoard -> board)
 	var temp : int := 0
 	var temp2 : int := 0
 	var score : int := 0
@@ -75,7 +83,6 @@ class AiMiniMax
 	    end if
 	    scoreR := score
 	    winScoreR := winScoreR
-	    put: stremout,("Score: ")
 	else
 	    getTotalScore (2, temp)
 	    score += temp
@@ -96,15 +103,21 @@ class AiMiniMax
 		    score += temp
 		    winScore += temp2
 		end if
+		tempBoard -> setBoard (preBoard (depth) -> board)
 	    end for
 	    scoreR := score div count
 	    winScoreR := winScore div count
 	end if
+	put : stremout, "Score: " ..
+	put : stremout, scoreR ..
+	put : stremout, "Depth: " ..
+	put : stremout, depth
     end getScoreOfBoard
 
     procedure getMove (c : ^connectFourBoard, depth : int, var moveX : int)
 	curBoard -> setBoard (c -> board)
 	tempBoard -> setBoard (c -> board)
+	new preBoard, depth
 
 	var valid : boolean
 	var bestMove : int := -1
